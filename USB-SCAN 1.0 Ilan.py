@@ -5,7 +5,7 @@ import webbrowser
 from datetime import datetime
 date_heure = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-# Biblothèque pour connaître toutes les informations d'un système
+# Biblothèque pour connaître toutes les informations d'un système sous Windows
 import wmi 
 def get_usb_devices():
     usb_devices = []
