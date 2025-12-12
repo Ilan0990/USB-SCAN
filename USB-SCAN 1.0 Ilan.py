@@ -3,7 +3,6 @@ import webbrowser
 
 # Biblothèque standard pour rajouter la date et l'heure 
 from datetime import datetime
-date_heure = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 # Biblothèque pour connaître toutes les informations d'un système sous Windows
 import wmi 
@@ -35,6 +34,8 @@ while continu:
 
     # Afficher le message de bienvenue
     print(f"Bonjour, {prenom} {nom} !")
+
+    date_heure = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     # Demander si l'utilisateur souhaite continuer
     reponse = input("Souhaitez-vous continuer ? (oui/non) ").strip().lower()
@@ -117,3 +118,4 @@ with open("reponses_utilisateur.html", "w", encoding="utf-8") as fichier:
 
 # Ouvrir le fichier dans le navigateur
 webbrowser.open("reponses_utilisateur.html")
+
