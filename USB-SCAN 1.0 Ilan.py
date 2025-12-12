@@ -32,16 +32,19 @@ while continu:
     # Demander le prénom de l'utilisateur
     nom = input("Quel est votre nom ?")
 
-    # Afficher le message de bienvenue
-    print(f"Bonjour, {prenom} {nom} !")
+    # Demande le numéro du poste
+    poste = input ("Quelle est le numéro ton poste ?")
 
-    date_heure = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    # Afficher le message de bienvenue
+    print(f"Bonjour, {prenom} {nom}, poste {poste} !")
 
     # Demander si l'utilisateur souhaite continuer
     reponse = input("Souhaitez-vous continuer ? (oui/non) ").strip().lower()
 
+    date_heure = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
     # Stocker la réponse
-    reponses_utilisateur.append({"nom": nom,"prenom": prenom,"reponse": reponse,"date": date_heure})
+    reponses_utilisateur.append({"nom": nom,"prenom": prenom,"reponse": reponse,"date": date_heure,"poste": poste})
     
     if reponse == "non":
         continu = False # Arrête la boucle
@@ -67,6 +70,7 @@ contenu_html = """
         <tr>
             <th>Prénom</th>
             <th>Nom</th>
+            <th>Poste</th>
             <th>Réponse</th>
             <th>Date/Heure</th>
         </tr>
@@ -78,6 +82,7 @@ for reponse in reponses_utilisateur:
         <tr>
             <td>{reponse['prenom']}</td>
             <td>{reponse['nom']}</td>
+            <td>{reponse['poste']}
             <td>{reponse['reponse']}</td>
             <td>{reponse['date']}</td>
         </tr>
@@ -118,4 +123,3 @@ with open("reponses_utilisateur.html", "w", encoding="utf-8") as fichier:
 
 # Ouvrir le fichier dans le navigateur
 webbrowser.open("reponses_utilisateur.html")
-
