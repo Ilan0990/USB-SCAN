@@ -1,0 +1,158 @@
+# Import des modules nécessaires
+import webbrowser
+import os
+from datetime import datetime
+import platform
+import subprocess
+import html
+
+# --- Fonction pour détecter les périphériques USB ---
+def detecter_ports_usb():
+    """Retourne le nombre de périphériques USB et une liste de détails selon le système."""
+    systeme = platform.system()
+    ports_usb = []
+
+    try:
+        if systeme == "Windows":
+            result = subprocess.run(
+                ['wmic', 'path', 'Win32_USBHub', 'get', 'DeviceID'],
+                capture_output=True, text=True, timeout=5
+            )
+            lines = result.stdout.strip().split('\n')[1:]  # ignore l'en-tête
+            ports_usb = [line.strip() for line in lines if line.strip()]
+
+        elif systeme == "Linux":
+            result = subprocess.run(['lsusb'], capture_output=True, text=True, timeout=5)
+            lines = result.stdout.strip().split('\n')
+            ports_usb = [line.strip() for line in lines if line.strip()]
+
+        elif systeme == "Darwin":  # macOS
+            result = subprocess.run(['system_profiler', 'SPUSBDataType'], capture_output=True, text=True, timeout=10)
+            lines = result.stdout.split('\n')
+            ports_usb = [line.strip() for line in lines if 'Product ID' in line]
+
+    except Exception as e:
+        print(f"⚠️ Erreur lors de la détection USB : {e}")
+        return 0, []
+
+    return len(ports_usb), ports_usb
+
+
+# --- Liste pour stocker les fiches utilisateurs ---
+fiches_utilisateurs = []
+
+# --- Boucle principale ---
+continuer = True
+
+while continuer:
+    # Saisie des informations utilisateur
+    prenom = input("Quel est votre prénom ? ").strip()
+    nom = input("Quel est votre nom ? ").strip()
+    numero_poste = input("Quel est le numéro de votre poste ? ").strip()
+
+    # Message de bienvenue selon l'utilisateur
+    if prenom.lower() == "ali" and nom.lower() == "camara":
+        print(f"Te revoilà, {prenom} {nom} !")
+    else:
+        print(f"Bonjour, {prenom} {nom} !")
+
+    # Informations système
+    systeme = platform.system()
+    version = platform.version()
+    processeur = platform.processor()
+
+    # Détection des ports USB
+    print("\n🔍 Analyse du système en cours...")
+    nb_usb, details_usb = detecter_ports_usb()
+    print(f"✅ Système : {systeme}, Version : {version}, Processeur : {processeur}")
+    print(f"✅ Nombre de périphériques USB détectés : {nb_usb}")
+
+    # Affichage des détails (max 5)
+    if details_usb:
+        print("\n📋 Détails USB :")
+        for i, dev in enumerate(details_usb[:5], 1):
+            print(f"  {i}. {dev[:80]}...")
+        if len(details_usb) > 5:
+            print(f"  ... et {len(details_usb) - 5} autre(s)")
+
+    # Date et heure
+    date_heure = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    # Stockage de la fiche utilisateur dans la liste
+    fiche = {
+        "prenom": prenom,
+        "nom": nom,
+        "numero_poste": numero_poste,
+        "systeme": systeme,
+        "processeur": processeur,
+        "ports_usb": nb_usb,
+        "details_usb": details_usb,
+        "date_heure": date_heure
+    }
+    fiches_utilisateurs.append(fiche)
+
+    # Demander si on continue
+    reponse = input("\n✅ Souhaitez-vous refaire une analyse ? (oui/non) ").strip().lower()
+    while reponse not in ["oui", "non"]:
+        reponse = input("Réponds par 'oui' ou 'non' : ").strip().lower()
+    if reponse == "non":
+        continuer = False
+        print("\n👋 Fin de l'analyse. Au revoir !")
+
+
+# --- Génération d'un rapport HTML simple ---
+def generer_html(fiches):
+    html_contenu = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Rapport USB</title>
+        <style>
+            body { font-family: Arial; margin: 20px; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #ddd; padding: 8px; }
+            th { background-color: #4CAF50; color: white; }
+            tr:nth-child(even){background-color: #f2f2f2;}
+        </style>
+    </head>
+    <body>
+        <h2>Historique des analyses</h2>
+        <table>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>N° Poste</th>
+                <th>Système</th>
+                <th>Processeur</th>
+                <th>Ports USB</th>
+                <th>Date et Heure</th>
+            </tr>
+    """
+    for f in fiches:
+        html_contenu += f"""
+            <tr>
+                <td>{html.escape(f['prenom'])}</td>
+                <td>{html.escape(f['nom'])}</td>
+                <td>{html.escape(f['numero_poste'])}</td>
+                <td>{html.escape(f['systeme'])}</td>
+                <td>{html.escape(f['processeur'])}</td>
+                <td>{f['ports_usb']}</td>
+                <td>{f['date_heure']}</td>
+            </tr>
+        """
+    html_contenu += """
+        </table>
+    </body>
+    </html>
+    """
+    return html_contenu
+
+
+# --- Créer le fichier HTML et l'ouvrir ---
+fichier_html = "rapport_usb.html"
+with open(fichier_html, "w", encoding="utf-8") as f:
+    f.write(generer_html(fiches_utilisateurs))
+
+print(f"\n📄 Rapport généré : {os.path.abspath(fichier_html)}")
+webbrowser.open("file://" + os.path.abspath(fichier_html))
