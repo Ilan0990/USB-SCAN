@@ -50,7 +50,7 @@ while continu:
         continu = False # Arrête la boucle
         print("Au revoir !")
 
-# Générer le contenu HTML en permettent d'écrire une chaine multilignes
+# Générer le contenu HTML, les """ permettent d'écrire une chaine multilignes
 contenu_html = """ 
 <!DOCTYPE html>
 <html>
