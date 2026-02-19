@@ -32,7 +32,7 @@ verbes_data = [
 
 # Insertion des données (seulement si la table est vide pour éviter les doublons)
 cursor.execute('SELECT COUNT(*) FROM verbes') # Compte le nombre total de lignes dans la table verbes
-if cursor.fetchone()[0] == 0:
+if cursor.fetchone()[0] == 0: # Vérifie si le résultat de la requete précedente est égal à zéro
     cursor.executemany('''
     INSERT INTO verbes (infinitif, preterit, participe_passe, traduction_fr)
     VALUES (?, ?, ?, ?)
@@ -58,8 +58,8 @@ def demander_nb_questions(max_questions):
         if reponse == 'tout':
             return max_questions
         if reponse.isdigit(): # Vérifie si la chaîne de caractères est composée uniquement de chiffres
-            nb = int(reponse)
-            if 1 <= nb <= max_questions:
+            nb = int(reponse) # Converti une chaîne de caractères en nombre entier
+            if 1 <= nb <= max_questions: # Vérifie que le nombre choisi est bien compris entre 1 et la variable max_questions 
                 return nb
         print(f"Entrée invalide. Choisis un nombre entre 1 et {max_questions}.")
 
@@ -77,12 +77,12 @@ def quiz_complet():
     print("QUIZ COMPLET")
     print("Taper 'quit' pour arrêter")
 
-    random.shuffle(verbes)
+    random.shuffle(verbes) # Mélange aléatoirement la liste
     nb_questions = demander_nb_questions(len(verbes))
-    verbes = verbes[:nb_questions]
+    verbes = verbes[:nb_questions] # Découpe la liste de verbes pour ne garder que les premiers mots de la liste mélangés
 
     for verbe in verbes:
-        id, infinitif, preterit, participe_passe, traduction_fr = verbe
+        id, infinitif, preterit, participe_passe, traduction_fr = verbe # Décompose verbe en 5 variables séparées
         print("Verbe: ", infinitif)
 
         # Traduction
@@ -233,7 +233,7 @@ def menu_quiz():
             print("Choix invalide !")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     menu_quiz()
 
 
