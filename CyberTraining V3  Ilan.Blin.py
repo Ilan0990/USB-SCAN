@@ -5,12 +5,12 @@ import random
 class GestionnaireBase:
     """Classe de base pour gérer les connexions à la base de données"""
     
-    def __init__(self, nom_db='words.db'):
-        self.nom_db = nom_db
-        self._initialiser_base()
+    def __init__(self, nom_db='words.db'): # Permet d'initialiser un objet à chaque fois que l'on crée un objet dans la classe
+        self.nom_db = nom_db # Crée un attribut et le stocke dans l'objet + Création variable
+        self._initialiser_base() # Appelle la méthode
     
-    def _initialiser_base(self):
-        con = sqlite3.connect(self.nom_db)
+    def _initialiser_base(self):  # Création de la méthode
+        con = sqlite3.connect(self.nom_db) # Crée une base de données et établit une connexion
         cursor = con.cursor()
         
         # Table verbes avec colonnes de performance
@@ -39,8 +39,8 @@ class GestionnaireBase:
         
         # Vérifier si les colonnes succes/tentatives existent dans verbes
         cursor.execute("PRAGMA table_info(verbes)")
-        colonnes = [col[1] for col in cursor.fetchall()]
-        
+        colonnes = [col[1] for col in cursor.fetchall()] # Crée une liste contenant le deuxième champ de chaque ligne retournée par la requête SQL précédente
+         
         if 'succes' not in colonnes:
             cursor.execute('ALTER TABLE verbes ADD COLUMN succes INTEGER DEFAULT 0')
         if 'tentatives' not in colonnes:
@@ -48,7 +48,7 @@ class GestionnaireBase:
         
         # Données d'exemple pour les verbes
         cursor.execute('SELECT COUNT(*) FROM verbes')
-        if cursor.fetchone()[0] == 0:
+        if cursor.fetchone()[0] == 0: # Récupére toutes les lignes résultant d’une requête SQL exécutée auparavant
             verbes_data = [
                 ('be', 'was/were', 'been', 'être'),
                 ('have', 'had', 'had', 'avoir'),
@@ -460,7 +460,7 @@ class QuizInfini:
 
 class InterfaceUtilisateur:
     
-    def __init__(self):
+    def __init__(self): 
         self.gest_verbes = GestionnaireVerbes()
         self.gest_acronymes = GestionnaireAcronymes()
         self.quiz = QuizInfini(self.gest_verbes, self.gest_acronymes)
